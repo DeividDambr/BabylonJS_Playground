@@ -1,1 +1,1 @@
-# BabylonJS_Playground
+Various simple Babylon.js playground projects
