@@ -1,0 +1,173 @@
+const createScene = () => {
+    const scene = new BABYLON.Scene(engine);
+        
+    scene.createDefaultCamera(true, true, true);
+    scene.createDefaultLight();
+
+    var helperCamera = scene.activeCamera;
+    
+    helperCamera.radius = 8;
+    helperCamera.alpha = Math.PI * 1.3;
+    helperCamera.beta = 2.5 * Math.PI / 7.5;
+
+    //ground mesh
+    const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 3, width: 3, subdivisions: 4});
+    ground.material = new BABYLON.StandardMaterial("groundMaterial", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("https://cdn.shopify.com/s/files/1/1075/9404/products/Coastline-Lagoon-face_600x.jpg?v=1620680860", scene)
+
+    //computer monitor meshes
+    const base = BABYLON.MeshBuilder.CreateCylinder("base", {height: 0.1, diameterTop: 0.6, diameterBottom: 0.8});
+    base.position = new BABYLON.Vector3(0, 0.05, 0);
+
+    const box = [];
+    box[0] = BABYLON.MeshBuilder.CreateBox("box1", {width: 0.05, height: 0.4, depth: 0.2});
+    box[0].position = new BABYLON.Vector3(0, 0.3, 0);
+
+    box[1] = BABYLON.MeshBuilder.CreateBox("box2", {width: 0.05, height: 0.3, depth: 0.2});
+    box[1].position = new BABYLON.Vector3(-0.115, 0.563, 0);
+    box[1].rotation = new BABYLON.Vector3(Math.PI, Math.PI, Math.PI / 3.2);
+
+    box[2] = BABYLON.MeshBuilder.CreateBox("box3", {width: 1, height: 0.7, depth: 0.035});
+    box[2].position = new BABYLON.Vector3(-0.24, 0.72, 0);
+    box[2].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, 0);
+
+    box[3] = BABYLON.MeshBuilder.CreateBox("box4", {width: 0.05, height: 0.7, depth: 0.025});
+    box[3].position = new BABYLON.Vector3(-0.265, 0.72, 0.475);
+    box[3].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, 0);
+
+    box[4] = BABYLON.MeshBuilder.CreateBox("box5", {width: 0.05, height: 0.7, depth: 0.025});
+    box[4].position = new BABYLON.Vector3(-0.265, 0.72, -0.475);
+    box[4].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, 0);
+
+    box[5] = BABYLON.MeshBuilder.CreateBox("box6", {width: 0.05, height: 0.9, depth: 0.025});
+    box[5].position = new BABYLON.Vector3(-0.265, 1.045, 0);
+    box[5].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, Math.PI / 2);
+
+    box[6] = BABYLON.MeshBuilder.CreateBox("box7", {width: 0.05, height: 0.9, depth: 0.025});
+    box[6].position = new BABYLON.Vector3(-0.265, 0.395, 0);
+    box[6].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, Math.PI / 2);
+    
+    box[7] = BABYLON.MeshBuilder.CreateBox("box8", {width: 0.9, height: 0.6, depth: 0.035});
+    box[7].position = new BABYLON.Vector3(-0.25, 0.72, 0);
+    box[7].rotation = new BABYLON.Vector3(Math.PI, Math.PI / 2, 0);
+
+    const powerButton = BABYLON.MeshBuilder.CreateCylinder("button", {height: 0.025, diameterTop: 0.025, diameterBottom: 0.025});
+    powerButton.position = new BABYLON.Vector3(-0.275, 0.445, -0.475);
+    powerButton.rotation = new BABYLON.Vector3(Math.PI, Math.PI, Math.PI / 2);
+
+    //table meshes
+    const table = [];
+
+    table[0] = BABYLON.MeshBuilder.CreateBox("table1", {width: 0.05, height: 1.2, depth: 2});
+    table[0].position = new BABYLON.Vector3(0.6, 0.8, 0);
+    table[0].rotation = new BABYLON.Vector3(Math.PI, Math.PI, Math.PI / 2);
+
+    table[1] = BABYLON.MeshBuilder.CreateBox("table1", {width: 0.12, height: 0.82, depth: 0.12});
+    table[1].position = new BABYLON.Vector3(1.05, 0.41, -0.85);
+
+    table[2] = BABYLON.MeshBuilder.CreateBox("table1", {width: 0.12, height: 0.82, depth: 0.12});
+    table[2].position = new BABYLON.Vector3(1.05, 0.41, 0.85);
+
+    table[3] = BABYLON.MeshBuilder.CreateBox("table1", {width: 0.12, height: 0.82, depth: 0.12});
+    table[3].position = new BABYLON.Vector3(0.15, 0.41, -0.85);
+
+    table[4] = BABYLON.MeshBuilder.CreateBox("table1", {width: 0.12, height: 0.82, depth: 0.12});
+    table[4].position = new BABYLON.Vector3(0.15, 0.41, 0.85);
+
+    //mesh coloring
+    base.material = new BABYLON.StandardMaterial("baseMaterial", scene);
+    base.material.diffuseColor = new BABYLON.Color3(0.21, 0.19, 0.19, 0.84);
+
+    powerButton.material = new BABYLON.StandardMaterial("buttonMaterial", scene);
+    powerButton.material.emissiveColor = new BABYLON.Color3(0.15, 0.31, 0.97);
+
+    //root parents
+    var computerMonitor = new BABYLON.TransformNode("rootMonitor");
+    var tableWhole = new BABYLON.TransformNode("rootTable");
+    var setup = new BABYLON.TransformNode("rootSetup");
+
+    computerMonitor.parent = setup;
+    tableWhole.parent = setup;
+
+    for(var i = 0; i < 8; i++){
+        box[i].parent = computerMonitor;
+        //mesh coloring
+        box[i].material = new BABYLON.StandardMaterial("boxMaterial", scene);
+        box[i].material.diffuseColor = new BABYLON.Color3(0.12, 0.11, 0.11);
+    }
+
+    for(var i = 0; i < 5; i++){
+        table[i].parent = tableWhole;
+        //mesh coloring
+        table[i].material = new BABYLON.StandardMaterial("tableMaterial", scene);
+        table[i].material.diffuseColor = new BABYLON.Color3(0.3, 0.15, 0.09);
+    }
+
+    table[0].material = new BABYLON.StandardMaterial("tableMaterial", scene);
+    table[0].material.diffuseColor = new BABYLON.Color3(0.28, 0.3, 0.44);
+    
+    box[7].material = new BABYLON.StandardMaterial("boxMaterial", scene);
+    box[7].material.diffuseTexture = new BABYLON.Texture("https://img.redbull.com/images/q_auto,f_auto/redbullcom/2021/2/9/q0igpsdmyhplgrgz03si/defeat", scene);
+    
+    //make emissive materials glow
+    var gl = new BABYLON.GlowLayer("glow", scene);
+    gl.intensity = 1.5;
+
+    powerButton.parent = computerMonitor;
+    base.parent = computerMonitor;
+    computerMonitor.position = new BABYLON.Vector3(0.8, 0.825, 0);
+    computerMonitor.scaling = new BABYLON.Vector3(0.75, 0.75, 0.75)
+    //sound effect + on button press
+    const gunshotSound = new BABYLON.Sound("gunshot", "sounds/gunshot.wav", scene);
+    var cannonPolice = true;
+    
+    window.addEventListener("keydown", function (evt) {
+        // Press p key to fire
+        if (evt.keyCode === 80 && cannonPolice == true) {
+            gunshotSound.play();
+            cannonPolice = false;
+            setTimeout(function(){cannonPolice = true;}, 800);
+        }
+    });
+
+    //movement
+
+    var local_pos;
+    var x = 0;
+    dx = 0.01;
+    var y = 0;
+    var scaleControl = 0.75;
+    var scaleDir = false; //scale down
+    var translateControl = 0;
+    var translateDir = false; //move forward
+    var direction = true;
+
+    scene.registerBeforeRender(function () {
+        //rotation
+        computerMonitor.rotate(BABYLON.Axis.Y, Math.PI / 100, BABYLON.Space.LOCAL);
+        setup.rotate(BABYLON.Axis.Y, Math.PI / 500, BABYLON.Space.WORLD)
+
+        //translation x
+        setup.position = new BABYLON.Vector3(translateControl, 0, 0);
+        if(translateDir == true){
+            translateControl += 0.01;
+            if(translateControl >= 0.2) translateDir = false;
+        }
+        else{
+            translateControl -= 0.01;
+            if(translateControl <= -0.5) translateDir = true;
+        }
+        //scaling
+        setup.scaling = new BABYLON.Vector3(scaleControl, scaleControl, scaleControl);
+        if(scaleDir == false){
+            scaleControl -= 0.001;
+            if(scaleControl <= 0.5) scaleDir = true;
+        }
+        else{
+            scaleControl += 0.001;
+            if(scaleControl >= 0.75) scaleDir = false;
+        }
+    });
+
+    return scene;
+};

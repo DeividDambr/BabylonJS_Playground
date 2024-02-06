@@ -1,0 +1,122 @@
+const createScene = () => {
+    // Scene and Camera
+    var scene = new BABYLON.Scene(engine);
+
+    var camera1 = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 10, new BABYLON.Vector3(0, -5, 0), scene);
+    scene.activeCamera = camera1;
+    scene.activeCamera.attachControl(canvas, true);
+    camera1.lowerRadiusLimit = 2;
+    camera1.upperRadiusLimit = 10;
+    camera1.wheelDeltaPercentage = 0.01;
+
+    // Lights
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.6;
+    light.specular = BABYLON.Color3.Black();
+
+    var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, -1.0), scene);
+    light2.position = new BABYLON.Vector3(0, 5, 5);
+
+    //ground mesh
+    const ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 5, width: 5, subdivisions: 4});
+    ground.material = new BABYLON.StandardMaterial("groundMaterial", scene);
+    ground.material.diffuseTexture = new BABYLON.Texture("https://cdn.shopify.com/s/files/1/1075/9404/products/Coastline-Lagoon-face_600x.jpg?v=1620680860", scene)
+
+    // Keyboard events
+    var inputMap = {};
+    scene.actionManager = new BABYLON.ActionManager(scene);
+    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+        inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+    }));
+    scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+        inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+    }));
+
+
+    BABYLON.SceneLoader.ImportMesh(
+        "", 
+        "https://raw.githubusercontent.com/Verinel/uni_3d/2-ND/",
+        "Maximo_girl.glb",
+        scene,
+        function (newMeshes, particleSystems, skeletons, animationGroups) {
+            const hero = newMeshes[0];
+
+            //Scale the model down
+            hero.scaling.scaleInPlace(1.5);
+
+            //Lock camera on the character
+            camera1.target = hero;
+
+            //Hero character variables 
+            var heroSpeed = 0.03;
+            var heroSpeedBackwards = 0.025;
+            var heroRotationSpeed = 0.1;
+
+            var animating = true;
+
+            const walkAnim = scene.getAnimationGroupByName("Walking");
+            const rumbaAnim = scene.getAnimationGroupByName("Rumba");
+            const idleAnim = scene.getAnimationGroupByName("Idle");
+
+        //Rendering loop (executed for everyframe)
+        scene.onBeforeRenderObservable.add(() => {
+            var keydown = false;
+            //Manage the movements of the character (e.g. position, direction)
+            if (inputMap["w"]) {
+                hero.moveWithCollisions(hero.forward.scaleInPlace(heroSpeed));
+                keydown = true;
+            }
+            if (inputMap["s"]) {
+                hero.moveWithCollisions(hero.forward.scaleInPlace(-heroSpeedBackwards));
+                keydown = true;
+            }
+            if (inputMap["a"]) {
+                hero.rotate(BABYLON.Vector3.Up(), -heroRotationSpeed);
+                keydown = true;
+            }
+            if (inputMap["d"]) {
+                hero.rotate(BABYLON.Vector3.Up(), heroRotationSpeed);
+                keydown = true;
+            }
+            if (inputMap["r"]) {
+                keydown = true;
+            }
+            
+
+            //Manage animations to be played  
+            if (keydown) {
+                if (!animating) {
+                    animating = true;
+                    if (inputMap["r"]) {
+                        //Rumba!
+                        rumbaAnim.start(true, 1.0, rumbaAnim.from, rumbaAnim.to, false);
+                    }
+                    else if
+                        (inputMap["s"]) {
+                        //Backwards
+                        walkAnim.start(true, 1.0, walkAnim.to, walkAnim.from, false);
+                    }
+                    else {
+                        //Walk
+                        walkAnim.start(true, 1.0, walkAnim.from, walkAnim.to, false);
+                    }
+                }
+            }
+            else {
+                if (animating) {
+                    //Default animation is idle when no key is down     
+                    idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false);
+
+                    //Stop all animations besides Idle Anim when no key is down
+                    rumbaAnim.stop();
+                    walkAnim.stop();
+
+                    //Ensure animation are played only once per rendering loop
+                    animating = false;
+                }
+            }
+        });
+    });
+
+    return scene;
+};

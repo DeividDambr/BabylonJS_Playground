@@ -1,0 +1,295 @@
+var createScene = function() {
+    var scene = new BABYLON.Scene(engine);
+	
+	var light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+    var light2 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, -1), scene);   
+    light1.intensity =0.25;
+    light2.intensity =0.5; 
+
+    var frameRate = 20;
+
+	/*********performers*********/
+    //camera
+	var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), scene);
+    
+    //screen
+    var screen = BABYLON.MeshBuilder.CreateBox("door", {width:2, height:2, depth: 0.3}, scene);
+    screen.position.y = 2;
+    //spheres
+    var sphere1 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1}, scene);
+    sphere1.position.y = 2;
+    sphere1.position.z = 1.5;
+    var sphere2 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1}, scene);
+    sphere2.position.y = 2;
+    sphere2.position.z = 10.5;
+    sphere2.isVisible = false;
+
+    /*********animations*************/
+    //for screen to slide
+    var slide = new BABYLON.Animation("slide", "position.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var slide_keys = []; 
+
+    slide_keys.push({
+        frame: 0,
+        value: screen.position.y
+    });
+
+    slide_keys.push({
+        frame: 3 * frameRate,
+        value: screen.position.y + 1.95
+    });
+
+    slide.setKeys(slide_keys);
+
+    //for sphere to move
+    var translate = new BABYLON.Animation("translate", "position.z", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var translate_keys = []; 
+
+    translate_keys.push({
+        frame: 0,
+        value: sphere1.position.z
+    });
+
+    translate_keys.push({
+        frame: 3 * frameRate,
+        value: sphere1.position.z
+    });
+
+    translate_keys.push({
+        frame: 5 * frameRate,
+        value: sphere1.position.z + 9
+    });
+
+    translate.setKeys(translate_keys);
+
+    slide.setKeys(slide_keys);
+
+    //for sphere to move
+    var translate1 = new BABYLON.Animation("translate1", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var translate1_keys = []; 
+
+    translate1_keys.push({
+        frame: 0,
+        value: sphere1.position.x
+    });
+
+    translate1_keys.push({
+        frame: 8 * frameRate,
+        value: sphere1.position.x
+    });
+
+    translate1_keys.push({
+        frame: 10 * frameRate,
+        value: sphere1.position.x + 2
+    });
+
+    translate1.setKeys(translate1_keys);
+
+    //for sphere to move
+    var translate2 = new BABYLON.Animation("translate2", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var translate2_keys = []; 
+
+    translate2_keys.push({
+        frame: 0,
+        value: sphere2.position.x
+    });
+
+    translate2_keys.push({
+        frame: 8 * frameRate,
+        value: sphere2.position.x
+    });
+
+    translate2_keys.push({
+        frame: 10 * frameRate,
+        value: sphere2.position.x - 2
+    });
+
+    translate2.setKeys(translate2_keys);
+
+    //for sphere to move
+    var visible = new BABYLON.Animation("visibility", "isVisible", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var visible_keys = []; 
+
+    visible_keys.push({
+        frame: 0,
+        value: isVisible = false
+    });
+
+    visible_keys.push({
+        frame: 8 * frameRate - 1,
+        value: isVisible = false
+    });
+
+    visible_keys.push({
+        frame: 8 * frameRate,
+        value: isVisible = true
+    });
+
+    visible.setKeys(visible_keys);
+
+    //camera slide
+    var camMove1 = new BABYLON.Animation("camMove1", "position.z", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var camMove1_keys = []; 
+
+    camMove1_keys.push({
+        frame: 0,
+        value: -10
+    });
+
+    camMove1_keys.push({
+        frame: 5 * frameRate,
+        value: -10
+    });
+
+    camMove1_keys.push({
+        frame: 6 * frameRate,
+        value: 18
+    });
+
+    camMove1.setKeys(camMove1_keys);
+
+    //camera rotation
+    var camRot1 = new BABYLON.Animation("camRot1", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var camRot1_keys = []; 
+
+    camRot1_keys.push({
+        frame: 0,
+        value: 0
+    });
+
+    camRot1_keys.push({
+        frame: 6 * frameRate,
+        value: 0
+    });
+
+    camRot1_keys.push({
+        frame: 7 * frameRate,
+        value: Math.PI
+    });
+
+    camRot1.setKeys(camRot1_keys);
+
+    //camera slide
+    var camMove2 = new BABYLON.Animation("camMove2", "position.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var camMove2_keys = []; 
+
+    camMove2_keys.push({
+        frame: 0,
+        value: 2
+    });
+
+    camMove2_keys.push({
+        frame: 6 * frameRate,
+        value: 2
+    });
+
+    camMove2_keys.push({
+        frame: 8 * frameRate,
+        value: 7
+    });
+
+    camMove2.setKeys(camMove2_keys);
+
+    //camera rotation
+    var camRot2 = new BABYLON.Animation("camRot2", "rotation.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var camRot2_keys = []; 
+
+    camRot2_keys.push({
+        frame: 0,
+        value: 0
+    });
+
+    camRot2_keys.push({
+        frame: 7 * frameRate,
+        value: 0
+    });
+
+    camRot2_keys.push({
+        frame: 8 * frameRate,
+        value: Math.PI / 6
+    });
+
+    camRot2.setKeys(camRot2_keys);
+
+    //for light to brighten and dim
+	var lightDimmer = new BABYLON.Animation("dimmer", "intensity", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+	
+	var lightDimmer_keys = []; 
+
+    lightDimmer_keys.push({
+        frame: 0,
+        value: 0.5
+    });
+
+    lightDimmer_keys.push({
+        frame: 8 * frameRate,
+        value: 0.5
+    });
+
+    lightDimmer_keys.push({
+        frame: 10 * frameRate,
+        value: 0.7
+    });
+
+    lightDimmer_keys.push({
+        frame: 12 * frameRate,
+        value: 0
+    });
+
+    lightDimmer.setKeys(lightDimmer_keys);
+
+    /*******Run Clips**********/
+
+    scene.beginDirectAnimation(screen, [slide], 0, 25 * frameRate, false);
+    scene.beginDirectAnimation(sphere1, [translate, translate1], 0, 25 * frameRate, false);
+    scene.beginDirectAnimation(sphere2, [visible, translate2], 0, 25 * frameRate, false);
+    scene.beginDirectAnimation(camera, [camMove1, camRot1, camMove2, camRot2], 0, 25 * frameRate, false);
+    scene.beginDirectAnimation(light2, [lightDimmer], 0, 25 * frameRate, false);
+
+    /**************Peripherals of Scene***************/
+	var ground = BABYLON.MeshBuilder.CreateGround("ground", {width:50, height:50}, scene);
+
+    var wall1 = BABYLON.MeshBuilder.CreateBox("door", {width: 6, height:2, depth:0.1}, scene);
+	wall1.rotation.y = Math.PI/2;
+    wall1.position.x = 1;
+    wall1.position.y = 2;
+    wall1.position.z = 2.85;
+
+    var wall2 = BABYLON.MeshBuilder.CreateBox("door", {width: 6, height:2, depth:0.1}, scene);
+	wall2.rotation.y = Math.PI/2;
+    wall2.position.x = -1;
+    wall2.position.y = 2;
+    wall2.position.z = 2.85;
+
+    var wall2 = BABYLON.MeshBuilder.CreateBox("door", {width: 6, height:2, depth:0.1}, scene);
+	wall2.rotation.x = Math.PI/2;
+	wall2.rotation.z = Math.PI/2;
+    wall2.position.x = 0;
+    wall2.position.y = 1.05;
+    wall2.position.z = 2.85;
+
+    var wall3 = BABYLON.MeshBuilder.CreateBox("door", {width: 6, height:2, depth:0.1}, scene);
+	wall3.rotation.x = Math.PI/2;
+	wall3.rotation.z = Math.PI/2;
+    wall3.position.x = 0;
+    wall3.position.y = 1.05;
+    wall3.position.z = 2.85;
+
+    var roof = BABYLON.MeshBuilder.CreateBox("door", {width: 6, height:2, depth:0.1}, scene);
+	roof.rotation.x = Math.PI/2;
+	roof.rotation.z = Math.PI/2;
+    roof.position.x = 0;
+    roof.position.y = 2.95;
+    roof.position.z = 2.85;
+    
+    return scene;
+};
